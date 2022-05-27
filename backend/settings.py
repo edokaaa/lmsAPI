@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'crispy_forms',
     'lms',
+    'api',
     # 'quiz',
     # 'discussion-forum',
     # 'payment',
