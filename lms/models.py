@@ -116,3 +116,12 @@ class AdminChat(models.Model):
     def __str__(self):
         return f"Message from {self.sender.username}"
         
+
+class Voucher(models.Model):
+    code = models.CharField(max_length=7)
+    percentage = models.IntegerField()
+    is_used = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.code
+    

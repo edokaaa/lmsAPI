@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from . models import CapstoneProject, CourseFile, CourseMaterial, CoursePost, CourseVideo, Student,Track, User, Course
+from . models import CapstoneProject, CourseFile, CourseMaterial, CoursePost, CourseVideo, Student,Track, User, Course, Voucher
 
 # Django comes with a builtin admin dashboard,
 # this file enable us to customise it
@@ -34,3 +34,4 @@ admin.site.register(CourseVideo)
 admin.site.register(CourseFile)
 admin.site.register(CoursePost)
 admin.site.register(CapstoneProject)
+admin.site.register(Voucher)

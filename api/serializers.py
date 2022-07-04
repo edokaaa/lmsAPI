@@ -1,7 +1,7 @@
 from dataclasses import field, fields
 from pyexpat import model
 from rest_framework import serializers
-from lms.models import CapstoneProject, CourseMaterial, Track, User, Course
+from lms.models import CapstoneProject, CourseMaterial, Track, User, Course, Voucher
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -43,3 +43,8 @@ class CapstoneProjectSerializer(serializers.ModelSerializer):
         model = CapstoneProject
         fields = ('id', 'title', 'course')
 
+
+class VoucherSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Voucher
+        fields = ('id', 'code', 'percentage', 'is_used')

@@ -16,10 +16,15 @@ router.register(r'capstone-projects', views.CapstoneProjectView, 'capstone-proje
 
 
 
+
 urlpatterns = [
     path('', include(router.urls)),
 
     path('courses/<int:pk>/', views.CourseDetailAPIView.as_view(), name='course_detail'),
     path('users/<int:pk>/', views.UserDetailAPIView.as_view(), name='user_detail'),
     path('tracks/<int:pk>/', views.TrackDetailAPIView.as_view(), name='track_detail'),
-    path('capstone-projects/<int:pk>/', views.CapstoneDetailAPIView.as_view(), name='capstone_detail'),]
+    path('capstone-projects/<int:pk>/', views.CapstoneDetailAPIView.as_view(), name='capstone_detail'),
+    path('student-vouchers/<int:pk>/', views.VoucherDetailAPIView.as_view(), name='voucher_detail'),
+
+    path('student-vouchers/', views.voucher_alt_view, name='voucher')
+]
