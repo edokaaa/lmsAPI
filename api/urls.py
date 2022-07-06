@@ -26,5 +26,8 @@ urlpatterns = [
     path('capstone-projects/<int:pk>/', views.CapstoneDetailAPIView.as_view(), name='capstone_detail'),
     path('student-vouchers/<int:pk>/', views.VoucherDetailAPIView.as_view(), name='voucher_detail'),
 
-    path('student-vouchers/', views.voucher_alt_view, name='voucher')
+    path('student-vouchers/', views.voucher_alt_view, name='voucher'),
+
+    path('api/accounts/', include('accounts.urls')),
+
 ]
