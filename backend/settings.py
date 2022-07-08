@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'lms',
     'api',
+    'accounts',
     # 'quiz',
     # 'discussion-forum',
     # 'payment',
