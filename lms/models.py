@@ -1,30 +1,61 @@
 from django.db import models
+from django.utils.text import slugify
 
-from accounts.models import User
+import accounts
+
+
+LOCATIONS = (
+    ('ONL', 'Online'),
+    ('PHY', 'Physical')
+)
+
+class Tag(models.Model):
+    name = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.name
+    
+class Track(models.Model):
+    name = models.CharField(max_length=30)
+    description = models.CharField(max_length=100, blank=True)
+    slug = models.SlugField(max_length=250, unique=True, null=False)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+    
+    
 
 class Course(models.Model):
     name = models.CharField(max_length=30)
     description = models.CharField(max_length=100)
-    tutor = models.ForeignKey(User, on_delete=models.CASCADE)
+    tutor = models.ForeignKey("accounts.User", on_delete=models.CASCADE, related_name="course_tutor")
     weeks = models.IntegerField()
+    slug = models.SlugField(max_length=250, unique=True, null=False)
     price = models.IntegerField()
+    track = models.ForeignKey(Track, on_delete=models.CASCADE)
+    img_url = models.CharField(max_length=255, blank=True)
+    hero_url = models.CharField(max_length=255, blank=True)
+    tags = models.ManyToManyField(Tag, blank=True)
+    location = models.CharField(choices=LOCATIONS, max_length=3, default='ONL')
     
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
     
     @property
     def get_duration(self):
         return f"{self.weeks} weeks"
 
-class Track(models.Model):
-    name = models.CharField(max_length=30)
-    description = models.CharField(max_length=100, blank=True)
-    courses = models.ManyToManyField(Course) # A track can contain many courses and many course can be in a track
 
-    def __str__(self):
-        return self.name
-    
 
     # courses = Course
 
@@ -77,8 +108,8 @@ class CapstoneProject(models.Model):
 class AdminChat(models.Model):
     message = models.TextField()
     is_read = models.BooleanField()
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender')
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reciever')
+    sender = models.ForeignKey("accounts.User", on_delete=models.CASCADE, related_name='sender')
+    receiver = models.ForeignKey("accounts.User", on_delete=models.CASCADE, related_name='reciever')
 
     def __str__(self):
         return f"Message from {self.sender.username}"

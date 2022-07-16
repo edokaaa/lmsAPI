@@ -40,9 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'crispy_forms',
-    'lms',
-    'api',
     'accounts',
+    'lms',
     # 'quiz',
     # 'discussion-forum',
     # 'payment',
@@ -153,7 +152,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # We override the defaulf django authentication system to use ours
 # which we have defined in lms\models.py
 
-AUTH_USER_MODEL = 'lms.User'
+AUTH_USER_MODEL = 'accounts.User'
 
 # CorsHeaders settings
 # to whitelist our react app to be able to interact with our backend
@@ -161,3 +160,9 @@ AUTH_USER_MODEL = 'lms.User'
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
