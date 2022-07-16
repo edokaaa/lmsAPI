@@ -1,65 +1,63 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, User
+from django.utils.text import slugify
+
+import accounts
 
 
-class User(AbstractUser):
-    is_admin = models.BooleanField(default=False)
-    is_tutor = models.BooleanField(default=False)
-    phone_number = models.CharField(max_length=14, blank=True)
-    photo = models.ImageField(upload_to='profile_images', blank=True)
+LOCATIONS = (
+    ('ONL', 'Online'),
+    ('PHY', 'Physical')
+)
+
+class Tag(models.Model):
+    name = models.CharField(max_length=30)
 
     def __str__(self):
-        return self.username
+        return self.name
     
-    def user_type(self):
-        if self.is_tutor:
-            return 'Tutor'
-        elif self.is_admin or self.is_staff:
-            return 'Admin'
-        else:
-            return 'Student'
+class Track(models.Model):
+    name = models.CharField(max_length=30)
+    description = models.CharField(max_length=100, blank=True)
+    slug = models.SlugField(max_length=250, unique=True, null=False)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+    
     
 
 class Course(models.Model):
     name = models.CharField(max_length=30)
     description = models.CharField(max_length=100)
-    tutor = models.ForeignKey(User, on_delete=models.CASCADE)
+    tutor = models.ForeignKey("accounts.User", on_delete=models.CASCADE, related_name="course_tutor")
     weeks = models.IntegerField()
+    slug = models.SlugField(max_length=250, unique=True, null=False)
     price = models.IntegerField()
+    track = models.ForeignKey(Track, on_delete=models.CASCADE)
+    img_url = models.CharField(max_length=255, blank=True)
+    hero_url = models.CharField(max_length=255, blank=True)
+    tags = models.ManyToManyField(Tag, blank=True)
+    location = models.CharField(choices=LOCATIONS, max_length=3, default='ONL')
     
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
     
     @property
     def get_duration(self):
         return f"{self.weeks} weeks"
 
-class Track(models.Model):
-    name = models.CharField(max_length=30)
-    description = models.CharField(max_length=100, blank=True)
-    courses = models.ManyToManyField(Course) # A track can contain many courses and many course can be in a track
 
-    def __str__(self):
-        return self.name
-    
 
     # courses = Course
-
-class Student(User):
-    track = models.ForeignKey(Track, on_delete=models.CASCADE, blank=True, null=True)
-    courses = models.ManyToManyField(Course, blank=True, null=True)
-
-    def get_discount(self):
-        # till we figure out how to calculate the discount
-        discount = 0
-        return discount
-    
-    def get_enrolled_courses(self):
-        user_courses = Student.courses
-        # logic pending
-        return user_courses
-
 
 class CourseMaterial(models.Model):
     title = models.CharField(max_length=30)
@@ -80,7 +78,7 @@ class CourseVideo(CourseMaterial):
    
     def get_type(self):
         return 'video'
-    
+
 
 class CourseFile(CourseMaterial):
     file = models.FileField(upload_to='course_materials/files')
@@ -110,9 +108,18 @@ class CapstoneProject(models.Model):
 class AdminChat(models.Model):
     message = models.TextField()
     is_read = models.BooleanField()
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender')
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reciever')
+    sender = models.ForeignKey("accounts.User", on_delete=models.CASCADE, related_name='sender')
+    receiver = models.ForeignKey("accounts.User", on_delete=models.CASCADE, related_name='reciever')
 
     def __str__(self):
         return f"Message from {self.sender.username}"
         
+
+class Voucher(models.Model):
+    code = models.CharField(max_length=7)
+    percentage = models.IntegerField()
+    is_used = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.code
+    
