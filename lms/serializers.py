@@ -3,7 +3,8 @@ from lms.models import Track, Course, Tag
 
 from django.utils.text import slugify
 
-from accounts.serializers import UserMiniSerializer
+# from accounts.serializers import UserMiniSerializer
+from accounts.models import User
 
 
 
@@ -28,25 +29,39 @@ class TrackSerializer(serializers.ModelSerializer):
 
 class CourseSerializer(serializers.ModelSerializer):
     slug = serializers.SerializerMethodField(read_only=True)
-    tutor = UserMiniSerializer(read_only=True)
-    duration = serializers.SerializerMethodField(read_only=True)
+    tutor_id = serializers.IntegerField(write_only=True)
+    # duration = serializers.SerializerMethodField()
     # duration = serializers.SerializerMethodField(read_only=True)
     # track = TrackSerializer(read_only=True)
     # tags = TagSerializer(read_only=True, many=True)
     class Meta:
         model = Course
-        fields = ['id', 'name', 'description', 'duration', 'slug', 'tutor', 'location'
-        # 'track', 'tags',
+        fields = ['id', 'name', 'description', 'duration', 'slug', 'tutor_id', 'location', 'price', 
+        'track', #'tags',
         ]
-        
+    
+    def create(self, validated_data):
+        tutor_id = validated_data.pop('tutor_id')
+        tutor = User.objects.get(id=tutor_id)
+        validated_data = {
+            **{
+                "tutor": tutor
+            },
+            **validated_data
+        }
 
-    def get_duration(self, obj):
-        return f"{obj.duration} weeks"
+        return Course.objects.create(**validated_data)
+
+    def get_tutor_id(self, obj):
+        return obj.tutor.id
+
+    # def get_duration(self, obj):
+    #     return f"{obj.duration} weeks"
 
     def get_slug(self, obj):
-        if hasattr(obj, 'slug'):
-            return obj.slug
-        return slugify(obj.name)
+        # if hasattr(obj, 'slug'):
+        #     return obj.slug
+        return obj.slug
 
 
 

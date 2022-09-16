@@ -1,25 +1,28 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, generics
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
 from lms.serializers import  TrackSerializer, CourseSerializer
 from lms.models import Track, Course
 
-# auth
-from rest_framework.permissions import IsAuthenticated
 
-# Create your views here.
+from rest_framework import generics
+
 
 
 class CourseListCreateAPIView(generics.ListCreateAPIView):
+    
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
 
     # authentication_classes = []
     # permission_classes = []
 
+# class CourseCreateAPIView(generics.CreateAPIView):
+#     serializer_class = CourseSerializer
+#     queryset = Course.objects.all()
 
-class CourseRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+#     authentication_classes = []
+#     permission_classes = []
+
+class CourseRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
     lookup_field = 'pk'

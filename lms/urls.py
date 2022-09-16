@@ -17,7 +17,7 @@ router.register(r'tracks', views.TrackView, 'tracks')
 urlpatterns = [
     # path('', include(router.urls)),
     path('courses/', views.CourseListCreateAPIView.as_view()),
-    path('courses/<int:pk>/', views.CourseRetrieveUpdateDestroyAPIView.as_view()),
+    path('courses/<int:pk>/', views.CourseRetrieveAPIView.as_view()),
     # path('courses/<slug:slug>/', views.CourseDetailAPIView.as_view(), name='course_detail'),
     # path('courses/', views.CourseView.as_view(), name='courses'),
     # path('tracks/', views.TrackView, name='tracks_list'),

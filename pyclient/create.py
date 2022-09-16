@@ -1,21 +1,30 @@
+from json import JSONDecodeError
 import requests
-# from .defaults import api_url
-api_url = 'http://localhost:8000/'
+from login import get_token, api_url
 
-def create_course():
+token = get_token()
 
-    endpoint = f'{api_url}lms/courses/'
+if token is not None:
 
-    data = {
-        "name": "test2",
-        "description": "test2",
-        "duration": 2,
-        "tutor": 1
+    headers = {
+        'Authorization': f'Bearer {token}'
     }
 
-    # get_response = requests.get(endpoint)
-    get_response = requests.post(endpoint, json=data)
-    print(get_response.status_code) 
-    # print(get_response.json())
-
-create_course()
+    data = {
+        "name": "test",
+        "description": "demo",
+        "duration": 3,
+        "tutor": 1,
+        "price": 200,
+        "track": 1
+    }
+    
+    response = requests.post(f'{api_url}lms/courses/', headers=headers, json=data)
+    try:
+        print(response.json())
+    except JSONDecodeError:
+        print('unable to decode json')
+    print(response.status_code)
+    
+else:
+    print('Unsuccessful')
